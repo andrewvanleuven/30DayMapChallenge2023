@@ -1,6 +1,6 @@
 # 06-11-2023	Asia	Largest of the continents
 
-suppressPackageStartupMessages({library(tidyverse); library(sf); library(tigris); library(janitor); library(rvest); library(rleuven); library(xml2); library(measurements)})
+suppressPackageStartupMessages({library(tidyverse); library(sf); library(rvest); library(measurements)})
 
 schools <- read_html('https://ko.wikipedia.org/wiki/%EB%8C%80%ED%95%9C%EB%AF%BC%EA%B5%AD%EC%9D%98_%EB%8C%80%ED%95%99_%EB%AA%A9%EB%A1%9D') |> 
   html_nodes('div+ p a') |> 
@@ -29,23 +29,18 @@ kor_univ <- function(url){
   tibble(name = univ_name, kname = univ_kname, x=x, y=y)
 }
 
-kor_univ('https://ko.wikipedia.org/wiki/%EA%B0%80%EC%B2%9C%EB%8C%80%ED%95%99%EA%B5%90')
-
-
-# kor_univs <- map_df(.x = schools,
-#                     .f = function(x){kor_univ(x)})  
+kor_univs <- map_df(.x = schools,
+                    .f = function(x){kor_univ(x)})
 
 qs::qsave(kor_univs, 'data/day06.qs')
 
 kor_sf <- st_read('data/KOR_adm_shp/KOR_adm1.shp') |> 
   st_transform(5178)
 
-
 kor_univs <- qs::qread('data/day06.qs') |> 
-  filter(not_na(x), not_na(y)) |> 
+  filter(!is.na(x), !is.na(y)) |> 
   st_as_sf(coords = c("y","x"), crs = 4326, remove = F) |> 
   st_transform(5178)
-
 
 ggplot() + 
   geom_sf(data = kor_sf, fill = 'black', alpha = .08, color = 'black') +
