@@ -3,7 +3,7 @@
 suppressPackageStartupMessages({library(ggpubr); library(sf); library(nngeo); library(tidyverse); library(janitor); library(tigris)})
 options(scipen = 999)
 
-# df <- read_csv('/Users/andrew/Desktop/misc/FAF5.5.1_State/FAF5.5.1_State.csv') |> 
+# df <- data.table::fread('/Users/andrew/Desktop/misc/FAF5.5.1_State/FAF5.5.1_State.csv') |> 
 #   select(1:11) |> 
 #   filter(sctg2 == 2,
 #          dms_origst == 19,
@@ -40,7 +40,7 @@ st_freight_line <- function(the_data,st1 = 'IA', st2, fmode){
            mode == fmode) |> 
     pull(tons_2017)
   tons <- ifelse(is_empty(tons),0,tons)
-  nngeo::st_connect(us_dots |> filter(state == 'IA'),
+  nngeo::st_connect(us_dots |> filter(state == st1),
                     us_dots |> filter(state == st2)) |> 
     st_as_sf() |> 
     mutate(dest_state = st2,
