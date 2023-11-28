@@ -8,6 +8,8 @@
 
 .DS_Store
 
+*.TIF 
+*.tif
 # User-specific files
 .Ruserdata
 
